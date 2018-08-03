@@ -15,11 +15,15 @@ var autoUpdater = require("electron-updater").autoUpdater;
 // import { autoUpdater } from 'electron-updater';
 //const autoUpdater = require("electron-updater").autoUpdater;
 //const { autoUpdater } = require('electron-updater');
+// We don't want to support auto download.
 autoUpdater.autoDownload = false;
 var args = process.argv.slice(1);
 var serve = args.some(function (val) { return val === '--serve' || val === '-serve'; });
 var coin = { identity: 'city', tooltip: 'City Hub' }; // To simplify third party forks and different UIs for different coins, we'll define this constant that loads different assets.
 var chain;
+require('electron-context-menu')({
+    showInspectElement: serve
+});
 electron_1.ipcMain.on('start-daemon', function (event, arg) {
     // The "chain" object is supplied over the IPC channel and we should consider
     // it potentially "hostile", if anyone can inject anything in the app and perform
@@ -44,23 +48,18 @@ electron_1.ipcMain.on('start-daemon', function (event, arg) {
     }
 });
 electron_1.ipcMain.on('check-for-update', function (event, arg) {
-    electron_1.dialog.showMessageBox({
-        title: 'Updates',
-        message: 'Checking if there is any updates...'
-    });
     autoUpdater.checkForUpdates();
-    //autoUpdater.checkForUpdatesAndNotify();
     event.returnValue = 'OK';
 });
-require('electron-context-menu')({
-    showInspectElement: serve
+electron_1.ipcMain.on('download-update', function (event, arg) {
+    autoUpdater.downloadUpdate();
+    event.returnValue = 'OK';
 });
-// Hook up to updater events.
-// TODO: Migrate to an AppUpdateService.
 autoUpdater.on('checking-for-update', function () {
     writeLog('Checking for update...');
 });
-autoUpdater.on('update-available', function () {
+autoUpdater.on('update-available', function (info) {
+    electron_1.ipcRenderer.send('update-available', info);
     electron_1.dialog.showMessageBox({
         type: 'info',
         title: 'Found Updates',
@@ -76,7 +75,7 @@ autoUpdater.on('update-available', function () {
         }
     });
 });
-autoUpdater.on('update-not-available', function () {
+autoUpdater.on('update-not-available', function (info) {
     electron_1.dialog.showMessageBox({
         title: 'No Updates',
         message: 'Current version is up-to-date.'
@@ -84,7 +83,7 @@ autoUpdater.on('update-not-available', function () {
     //updater.enabled = true
     //updater = null
 });
-autoUpdater.on('update-downloaded', function () {
+autoUpdater.on('update-downloaded', function (info) {
     electron_1.dialog.showMessageBox({
         title: 'Install Updates',
         message: 'Updates downloaded, application will be quit for update...'

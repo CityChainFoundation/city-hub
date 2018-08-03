@@ -1,27 +1,9 @@
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, screen, Tray, shell, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, nativeImage, screen, Tray, shell, dialog, ipcRenderer } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import * as os from 'os';
 
-const { autoUpdater } = require("electron-updater");
-
-// const log = require('electron-log');
-// autoUpdater.logger = log;
-// log.transports.file.level = 'info';
-// log.transports.file.file = 'C:\\temp\\city-hub-log.txt';
-// log.transports.file.streamConfig = { flags: 'w' };
-
-// TODO: Figure out why we can't use this import style for the updater?
-// import { autoUpdater } from 'electron-updater';
-//const autoUpdater = require("electron-updater").autoUpdater;
-//const { autoUpdater } = require('electron-updater');
-
-autoUpdater.autoDownload = false;
-
-const args = process.argv.slice(1);
-const serve = args.some(val => val === '--serve' || val === '-serve');
-const coin = { identity: 'city', tooltip: 'City Hub' }; // To simplify third party forks and different UIs for different coins, we'll define this constant that loads different assets.
-let chain: Chain;
+const { autoUpdater } = require('electron-updater');
 
 interface Chain {
     name: string;
@@ -34,6 +16,29 @@ interface Chain {
     network: string;
     mode?: string;
 }
+
+// const log = require('electron-log');
+// autoUpdater.logger = log;
+// log.transports.file.level = 'info';
+// log.transports.file.file = 'C:\\temp\\city-hub-log.txt';
+// log.transports.file.streamConfig = { flags: 'w' };
+
+// TODO: Figure out why we can't use this import style for the updater?
+// import { autoUpdater } from 'electron-updater';
+//const autoUpdater = require("electron-updater").autoUpdater;
+//const { autoUpdater } = require('electron-updater');
+
+// We don't want to support auto download.
+autoUpdater.autoDownload = false;
+
+const args = process.argv.slice(1);
+const serve = args.some(val => val === '--serve' || val === '-serve');
+const coin = { identity: 'city', tooltip: 'City Hub' }; // To simplify third party forks and different UIs for different coins, we'll define this constant that loads different assets.
+let chain: Chain;
+
+require('electron-context-menu')({
+    showInspectElement: serve
+});
 
 ipcMain.on('start-daemon', (event, arg: Chain) => {
 
@@ -62,65 +67,75 @@ ipcMain.on('start-daemon', (event, arg: Chain) => {
 });
 
 ipcMain.on('check-for-update', (event, arg: Chain) => {
-
-    dialog.showMessageBox({
-        title: 'Updates',
-        message: 'Checking if there is any updates...'
-    })
-
     autoUpdater.checkForUpdates();
-    //autoUpdater.checkForUpdatesAndNotify();
-    event.returnValue = 'OK';
+    //event.returnValue = 'OK';
 });
 
-require('electron-context-menu')({
-    showInspectElement: serve
+ipcMain.on('download-update', (event, arg: Chain) => {
+    autoUpdater.downloadUpdate();
+    //event.returnValue = 'OK';
+});
+
+ipcMain.on('install-update', (event, arg: Chain) => {
+    setImmediate(() => autoUpdater.quitAndInstall());
+    //event.returnValue = 'OK';
 });
 
 
-// Hook up to updater events.
-// TODO: Migrate to an AppUpdateService.
 autoUpdater.on('checking-for-update', () => {
+    ipcRenderer.send('checking-for-update');
     writeLog('Checking for update...');
 })
 
-autoUpdater.on('update-available', () => {
-    dialog.showMessageBox({
-        type: 'info',
-        title: 'Found Updates',
-        message: 'Found updates, do you want update now?',
-        buttons: ['Sure', 'No']
-    }, (buttonIndex) => {
-        if (buttonIndex === 0) {
-            autoUpdater.downloadUpdate()
-        }
-        else {
-            //updater.enabled = true
-            //updater = null
-        }
-    })
+autoUpdater.on('error', (error) => {
+    ipcRenderer.send('update-error', error);
 })
 
-autoUpdater.on('update-not-available', () => {
-    dialog.showMessageBox({
-        title: 'No Updates',
-        message: 'Current version is up-to-date.'
-    })
+autoUpdater.on('update-available', (info) => {
+    ipcRenderer.send('update-available', info);
+
+    // dialog.showMessageBox({
+    //     type: 'info',
+    //     title: 'Found Updates',
+    //     message: 'Found updates, do you want update now?',
+    //     buttons: ['Sure', 'No']
+    // }, (buttonIndex) => {
+    //     if (buttonIndex === 0) {
+    //         autoUpdater.downloadUpdate()
+    //     }
+    //     else {
+    //         //updater.enabled = true
+    //         //updater = null
+    //     }
+    // })
+})
+
+autoUpdater.on('update-not-available', (info) => {
+    ipcRenderer.send('update-not-available', info);
+
+    // dialog.showMessageBox({
+    //     title: 'No Updates',
+    //     message: 'Current version is up-to-date.'
+    // })
 
     //updater.enabled = true
     //updater = null
 })
 
-autoUpdater.on('update-downloaded', () => {
-    dialog.showMessageBox({
-        title: 'Install Updates',
-        message: 'Updates downloaded, application will be quit for update...'
-    }, () => {
-        setImmediate(() => autoUpdater.quitAndInstall())
-    })
+autoUpdater.on('update-downloaded', (info) => {
+    ipcRenderer.send('update-downloaded', info);
+
+    // dialog.showMessageBox({
+    //     title: 'Install Updates',
+    //     message: 'Updates downloaded, application will be quit for update...'
+    // }, () => {
+    //     setImmediate(() => autoUpdater.quitAndInstall())
+    // })
 })
 
 autoUpdater.on('download-progress', (progressObj) => {
+    ipcRenderer.send('download-progress', progressObj);
+
     let log_message = "Download speed: " + progressObj.bytesPerSecond;
     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
@@ -162,9 +177,9 @@ function createWindow() {
         }));
     }
 
-    if (serve) {
+    //if (serve) {
         mainWindow.webContents.openDevTools();
-    }
+    //}
 
     // Emitted when the window is going to close.
     mainWindow.on('close', () => {
@@ -192,9 +207,7 @@ app.on('ready', () => {
 
 function registerAutoUpdater() {
     writeLog('REGISTER AUTO UPDATER EVENTS!');
-
-    autoUpdater.checkForUpdates();
-
+    //autoUpdater.checkForUpdates();
 
     // autoUpdater.on('update-downloaded', (info) => {
     //     console.log('Update downloaded');
