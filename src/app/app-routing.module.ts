@@ -77,7 +77,7 @@ const routes: Routes = [
         component: UpdateComponent,
         canActivate: [AuthenticatedUserGuard],
         data: {
-            title: 'Update'
+            title: 'Update City Hub'
         },
     },
     {

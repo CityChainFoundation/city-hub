@@ -10,6 +10,8 @@ import { UpdateService } from '../../services/update.service';
 export class UpdateComponent {
     @HostBinding('class.update') hostClass = true;
 
+    public installEnabled
+
     constructor(public updateService: UpdateService) {
 
     }

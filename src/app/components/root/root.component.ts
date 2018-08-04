@@ -153,15 +153,6 @@ export class RootComponent implements OnInit, OnDestroy {
     this.coinName = this.globalService.getCoinName();
   }
 
-  private startApp() {
-    console.log('Connected to daemon.');
-
-    // if (this.router.url !== '/login') {
-    //   //this.router.navigateByUrl('/login');
-    //   //this.router.navigateByUrl('/load');
-    // }
-  }
-
   private stopWalletInfoUpdates() {
     if (this.walletObservable) {
       this.walletObservable.unsubscribe();

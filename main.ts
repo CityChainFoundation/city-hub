@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, screen, Tray, shell, dialog, ipcRenderer } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, nativeImage, screen, Tray, shell, dialog } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import * as os from 'os';
@@ -30,6 +30,11 @@ interface Chain {
 
 // We don't want to support auto download.
 autoUpdater.autoDownload = false;
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let mainWindow = null;
+let contents = null;
 
 const args = process.argv.slice(1);
 const serve = args.some(val => val === '--serve' || val === '-serve');
@@ -77,22 +82,22 @@ ipcMain.on('download-update', (event, arg: Chain) => {
 });
 
 ipcMain.on('install-update', (event, arg: Chain) => {
-    setImmediate(() => autoUpdater.quitAndInstall());
+    autoUpdater.quitAndInstall();
+    //setImmediate(() => autoUpdater.quitAndInstall());
     //event.returnValue = 'OK';
 });
 
-
 autoUpdater.on('checking-for-update', () => {
-    ipcRenderer.send('checking-for-update');
+    contents.send('checking-for-update');
     writeLog('Checking for update...');
 })
 
 autoUpdater.on('error', (error) => {
-    ipcRenderer.send('update-error', error);
+    contents.send('update-error', error);
 })
 
 autoUpdater.on('update-available', (info) => {
-    ipcRenderer.send('update-available', info);
+    contents.send('update-available', info);
 
     // dialog.showMessageBox({
     //     type: 'info',
@@ -111,7 +116,7 @@ autoUpdater.on('update-available', (info) => {
 })
 
 autoUpdater.on('update-not-available', (info) => {
-    ipcRenderer.send('update-not-available', info);
+    contents.send('update-not-available', info);
 
     // dialog.showMessageBox({
     //     title: 'No Updates',
@@ -123,7 +128,7 @@ autoUpdater.on('update-not-available', (info) => {
 })
 
 autoUpdater.on('update-downloaded', (info) => {
-    ipcRenderer.send('update-downloaded', info);
+    contents.send('update-downloaded', info);
 
     // dialog.showMessageBox({
     //     title: 'Install Updates',
@@ -134,17 +139,13 @@ autoUpdater.on('update-downloaded', (info) => {
 })
 
 autoUpdater.on('download-progress', (progressObj) => {
-    ipcRenderer.send('download-progress', progressObj);
+    contents.send('download-progress', progressObj);
 
     let log_message = "Download speed: " + progressObj.bytesPerSecond;
     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
     writeLog(log_message);
 })
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow = null;
 
 function createWindow() {
     // Create the browser window.
@@ -157,6 +158,8 @@ function createWindow() {
         title: 'City Hub',
         icon: __dirname + '/app.ico'
     });
+
+    contents = mainWindow.webContents;
 
     mainWindow.setMenu(null);
 
@@ -177,9 +180,9 @@ function createWindow() {
         }));
     }
 
-    //if (serve) {
+    if (serve) {
         mainWindow.webContents.openDevTools();
-    //}
+    }
 
     // Emitted when the window is going to close.
     mainWindow.on('close', () => {

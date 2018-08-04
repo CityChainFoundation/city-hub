@@ -1,9 +1,6 @@
-import { Injectable, Inject, InjectionToken, Optional } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter, map, mergeMap } from 'rxjs/operators';
-import { DOCUMENT } from '@angular/common';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
+import { UpdateInfo } from '../components/update/update-info';
 
 @Injectable({
     providedIn: 'root'
@@ -12,6 +9,11 @@ export class UpdateService {
 
     static singletonInstance: UpdateService;
     private ipc: Electron.IpcRenderer;
+    public info: UpdateInfo;
+    public progress: any;
+    public downloaded = false;
+    public available = false;
+    public downloading = false;
 
     constructor(private electronService: ElectronService) {
 
@@ -19,27 +21,33 @@ export class UpdateService {
 
         if (!UpdateService.singletonInstance) {
 
-            this.ipc.on('check-for-update', (info) => {
+            this.ipc.on('check-for-update', (event, info: UpdateInfo) => {
                 console.log('check-for-update: ', info);
             });
 
-            this.ipc.on('update-available', (info) => {
+            this.ipc.on('update-available', (event, info: UpdateInfo) => {
                 console.log('update-available: ', info);
+                this.info = info;
+                this.available = true;
             });
 
-            this.ipc.on('update-not-available', (info) => {
+            this.ipc.on('update-not-available', (event, info: UpdateInfo) => {
                 console.log('update-not-available: ', info);
+                this.info = info;
+                this.available = false;
             });
 
-            this.ipc.on('update-downloaded', (info) => {
+            this.ipc.on('update-downloaded', (event, info: UpdateInfo) => {
                 console.log('update-downloaded: ', info);
+                this.downloaded = true;
             });
 
-            this.ipc.on('download-progress', (progress) => {
+            this.ipc.on('download-progress', (event, progress) => {
                 console.log('download-progress: ', progress);
+                this.progress = progress;
             });
 
-            this.ipc.on('update-error', (error) => {
+            this.ipc.on('update-error', (event, error) => {
                 console.log('update-error: ', error);
             });
 
@@ -51,19 +59,21 @@ export class UpdateService {
 
     checkForUpdate() {
         if (this.ipc) {
-            const result = this.electronService.ipcRenderer.send('check-for-update');
+            this.electronService.ipcRenderer.send('check-for-update');
         }
     }
 
     downloadUpdate() {
         if (this.ipc) {
-            const result = this.electronService.ipcRenderer.send('download-update');
+            this.downloading = true;
+            this.electronService.ipcRenderer.send('download-update');
         }
     }
 
     installUpdate() {
         if (this.ipc) {
-            const result = this.electronService.ipcRenderer.send('install-update');
+            this.downloading = false;
+            this.electronService.ipcRenderer.send('install-update');
         }
     }
 }

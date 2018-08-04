@@ -119,7 +119,7 @@
         <mat-icon>cloud_off</mat-icon>
       </button> -->
 
-      <button mat-icon-button matTooltip="Update available. Click to view details." routerLink="/update">
+      <button mat-icon-button *ngIf="updateService.available" matTooltip="Update available. Click to view details." routerLink="/update">
         <mat-icon>arrow_downward</mat-icon>
       </button>
 
