@@ -9,18 +9,27 @@ phases:
 - phase: Windows
   queue: Hosted VS2017
   displayName: Windows (x64)
+  env:
+  - arch=x64
+  - configuration=Release
   steps:
   - script: echo hello from Windows
 
 - phase: macOS
   queue: Hosted macOS Preview
   displayName: macOS (x64)
+  env:
+    - arch=x64
+    - configuration=Release
   steps:
   - script: echo hello from macOS
 
 - phase: Linux
   queue: Hosted Linux Preview
   displayName: Linux (AppImage, x64)
+  env:
+  - arch=x64
+  - configuration=Release
   steps:
   - script: echo hello from Linux
   - task: DotNetCoreCLI@2
@@ -31,10 +40,7 @@ phases:
 
 name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
 
-env:
-  global:
-  - arch=x64
-  - configuration=Release
+
 
 #   phases:
 # - phase: Windows
