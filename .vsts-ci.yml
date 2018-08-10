@@ -13,29 +13,25 @@ phases:
     name: macOS
     platform: mac
     queue: Hosted macOS Preview
-    displayName: Mac (x64)
 
 - template: build.yml
   parameters:
     name: Linux
     platform: linux
     queue: Hosted Linux Preview
-    displayName: Linux (AppImage, x64)
-
-- template: build.yml
-  parameters:
-    name: Windows_x64
-    platform: win
-    arch: x86
-    queue: Hosted VS2017
-    displayName: Windows (x64)
 
 - template: build.yml
   parameters:
     name: Windows_x86
     platform: win
+    arch: x86
     queue: Hosted VS2017
-    displayName: Windows (x86)
+
+- template: build.yml
+  parameters:
+    name: Windows_x64
+    platform: win
+    queue: Hosted VS2017
 
 name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
 

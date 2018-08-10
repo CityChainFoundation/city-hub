@@ -1,15 +1,21 @@
 parameters:
   name: ''
   queue: ''
-  displayName: ''
   platform: ''
   arch: 'x64' # Only overriden by 32-bit Windows
-  configuration: 'release' # Only do debug if specified
+  configuration: 'Release' # Only do Debug if specified
 
 phases:
 - phase: ${{ parameters.name }}
-  displayName: ${{ parameters.displayName }}
+  #displayName: ${{ parameters.displayName }}
+  displayName: ${{ format('City Hub ({0}-{1})', parameters.platform, parameters.arch) }}
   queue: ${{ parameters.queue }}
+
+steps:
+- task: Npm@1
+  displayName: npm install
+  inputs:
+    verbose: false
 
     # Not able to use matrix setup in the template, figure out how to do that in the future to more easily build different outputs on the same agent instance.
     # matrix:
@@ -22,14 +28,14 @@ phases:
     #     x86_release:
     #       buildArch: x86
     #       buildConfig: release
-  steps:
-  - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
-  - task: DotNetCoreCLI@2
-    displayName: dotnet publish
-    inputs:
-      command: publish
-      arguments: '-c ${{ parameters.configuration }} -v m -r ${{ parameters.arch }}'
-      workingDirectory: 'src/city-chain/src/City.Chain'
+  # steps:
+  # - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
+  # - task: DotNetCoreCLI@2
+  #   displayName: dotnet publish
+  #   inputs:
+  #     command: publish
+  #     arguments: '-c ${{ parameters.configuration }} -r ${{ parameters.platform }}-${{ parameters.arch }} -v m'
+  #     workingDirectory: 'src/city-chain/src/City.Chain'
 
 # steps:
 # - task: DotNetCoreCLI@2
