@@ -1,0 +1,13 @@
+parameters:
+  name: ''  # defaults for any parameters that aren't specified
+  queue: ''
+  arch: ''
+  configuration: ''
+
+phases:
+- phase: ${{ parameters.name }}
+  queue: ${{ parameters.queue }}
+  steps:
+  - script: echo hello from ${{ parameters.name }} and ${{ parameters.queue }} and ${{ parameters.arch }} and ${{ parameters.configuration }}
+  #- script: npm install
+  #- script: npm test
