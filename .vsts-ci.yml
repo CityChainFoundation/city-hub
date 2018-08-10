@@ -1,20 +1,40 @@
 phases:
 - phase: Windows
-  queue:
-    demands: agent.os -equals Windows_NT
+  queue: Hosted VS2017
   steps:
   - script: echo hello from Windows
+  - script: build arch=$(buildArch) config=$(buildConfig)
+
 - phase: macOS
-  queue:
-    demands: agent.os -equals Darwin
+  queue: Hosted macOS Preview
   steps:
   - script: echo hello from macOS
+  - script: build arch=$(buildArch) config=$(buildConfig)
+
 - phase: Linux
-  queue:
-    demands: agent.os -equals Linux
+  queue: Hosted Linux Preview
   steps:
   - script: echo hello from Linux
+  - script: build arch=$(buildArch) config=$(buildConfig)
+
+#   phases:
+# - phase: Windows
+#   queue:
+#     demands: agent.os -equals Windows_NT
+#   steps:
+#   - script: echo hello from Windows
+# - phase: macOS
+#   queue:
+#     demands: agent.os -equals Darwin
+#   steps:
+#   - script: echo hello from macOS
+# - phase: Linux
+#   queue:
+#     demands: agent.os -equals Linux
+#   steps:
+#   - script: echo hello from Linux
   
+
 
 #name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
 
