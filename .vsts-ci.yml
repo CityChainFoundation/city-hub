@@ -21,14 +21,6 @@ phases:
   parameters:
     name: Windows
     queue: Hosted VS2017
-      parallel: 2
-      matrix:
-      x64_release:
-        arch: x64
-        configuration: release
-      x86_release:
-        arch: x86
-        configuration: release
     displayName: Windows (x64)
 
 # phases:
