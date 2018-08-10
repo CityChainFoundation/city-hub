@@ -24,7 +24,7 @@ phases:
 
 - template: build.yml
   parameters:
-    name: Windows
+    name: Windows x64
     platform: win
     arch: x86
     queue: Hosted VS2017
@@ -32,7 +32,7 @@ phases:
 
 - template: build.yml
   parameters:
-    name: Windows
+    name: Windows x86
     platform: win
     queue: Hosted VS2017
     displayName: Windows (x86)
