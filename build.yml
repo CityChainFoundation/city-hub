@@ -10,12 +10,12 @@ phases:
   #displayName: ${{ parameters.displayName }}
   displayName: ${{ format('City Hub ({0}-{1})', parameters.platform, parameters.arch) }}
   queue: ${{ parameters.queue }}
+  steps:
 
-steps:
-- task: Npm@1
-  displayName: npm install
-  inputs:
-    verbose: false
+  - task: Npm@1
+    displayName: npm install
+    inputs:
+      verbose: false
 
     # Not able to use matrix setup in the template, figure out how to do that in the future to more easily build different outputs on the same agent instance.
     # matrix:
