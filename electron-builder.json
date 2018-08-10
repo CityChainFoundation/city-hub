@@ -1,5 +1,6 @@
 {
     "appId": "org.city-chain.hub",
+    "artifactName": "City.Hub-${version}-${os}-${arch}.${ext}",
     "productName": "City Hub",
     "asar": true,
     "publish": [{
@@ -27,8 +28,8 @@
         "AppImage:x64"
       ],
       "synopsis": "City Hub is your hub into everything on City Chain and the Smart City Platform.",
-      "category": "Utility",
-      "artifactName": "City.Hub-${version}-${os}-${arch}.${ext}"
+      "category": "Utility"
+      
     },
     "mac": {
       "icon": "dist/assets/icon.icns",
@@ -36,8 +37,7 @@
         "dmg",
         "zip"
       ],
-      "category": "public.app-category.productivity",
-      "artifactName": "City.Hub-${version}-${os}-${arch}.${ext}"
+      "category": "public.app-category.productivity"
     },
     "dmg": {
       "contents": [
