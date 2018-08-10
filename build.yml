@@ -17,6 +17,13 @@ phases:
     inputs:
       verbose: false
 
+  - task: Npm@1
+    displayName: npm run build
+    inputs:
+      command: custom
+      verbose: false
+      customCommand: ${{ format('run build:{0}', parameters.platform) }} 
+
     # Not able to use matrix setup in the template, figure out how to do that in the future to more easily build different outputs on the same agent instance.
     # matrix:
     #     x64_debug:
