@@ -48,7 +48,7 @@ phases:
       verbose: false
       customCommand: ${{ format('run build:{0}', parameters.platform) }} 
     env:
-      GH_TOKEN: $(mySecret)
+      GH_TOKEN: $(GH_TOKEN)
 
     # Not able to use matrix setup in the template, figure out how to do that in the future to more easily build different outputs on the same agent instance.
     # matrix:
