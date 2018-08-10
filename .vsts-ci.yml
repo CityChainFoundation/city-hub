@@ -13,7 +13,7 @@ phases:
     name: macOS
     platform: mac
     queue: Hosted macOS Preview
-    displayName: macOS (x64)
+    displayName: Mac (x64)
 
 - template: build.yml
   parameters:

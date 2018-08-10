@@ -24,7 +24,22 @@ phases:
     #       buildConfig: release
   steps:
   - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
-  
+  - task: DotNetCoreCLI@2
+    displayName: dotnet publish
+    inputs:
+      command: publish
+      arguments: '-c ${{ parameters.configuration }} -v m -r ${{ parameters.arch }}'
+      workingDirectory: 'src/city-chain/src/City.Chain'
+
+# steps:
+# - task: DotNetCoreCLI@2
+#   displayName: dotnet publish
+#   inputs:
+#     command: publish
+#     arguments: '-c release'
+#     workingDirectory: 'src/app'
+
+
   #- script: build arch=$(arch) config=$(buildConfig)
    
   # - script: "echo $(arch) $(configuration) --- $(parameters.arch) $(parameters.configuration)"
