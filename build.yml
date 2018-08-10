@@ -18,6 +18,6 @@ phases:
     #   configuration: release
 
   steps:
-  - script: echo hello from ${{ parameters.name }} and ${{ parameters.queue }} and ${{ parameters.arch }} and ${{ parameters.configuration }}
+  - script: echo hello from $(parameters.name) and $(parameters.queue) and $(parameters.arch) and $(parameters.configuration)
   #- script: npm install
   #- script: npm test

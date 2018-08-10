@@ -23,6 +23,8 @@ phases:
     queue: Hosted VS2017
     displayName: Windows (x64)
 
+name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
+
 # phases:
 # - phase: Windows
 #   queue: Hosted VS2017
