@@ -29,7 +29,7 @@ phases:
 
   steps:
   - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
-  -script: "echo $(arch) $(configuration) --- $(parameters.arch) $(parameters.configuration)"
+  - script: "echo $(arch) $(configuration) --- $(parameters.arch) $(parameters.configuration)"
   - script: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the $(configuration) value"
   #- script: npm install
   #- script: npm test
