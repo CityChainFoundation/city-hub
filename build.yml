@@ -1,12 +1,22 @@
 parameters:
-  name: ''  # defaults for any parameters that aren't specified
+  name: ''
   queue: ''
+  displayName: ''
   arch: ''
   configuration: ''
 
 phases:
 - phase: ${{ parameters.name }}
   queue: ${{ parameters.queue }}
+  displayName: ${{ parameters.displayName }}
+  parallel: 2
+  matrix:
+    debug:
+      configuration: debug
+      platform: x64
+    release:
+      configuration: release
+      platform: x64
 
     # parallel: 2
     # matrix:
@@ -18,6 +28,8 @@ phases:
     #   configuration: release
 
   steps:
-  - script: echo hello from $(parameters.name) and $(parameters.queue) and $(parameters.arch) and $(parameters.configuration)
+  - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
+  -script: "echo $(arch) $(configuration) --- $(parameters.arch) $(parameters.configuration)"
+  - script: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the $(configuration) value"
   #- script: npm install
   #- script: npm test
