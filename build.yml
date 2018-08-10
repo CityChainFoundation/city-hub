@@ -7,26 +7,16 @@ parameters:
 
 phases:
 - phase: ${{ parameters.name }}
-  queue: ${{ parameters.queue }}
   displayName: ${{ parameters.displayName }}
-  parallel: 2
-  matrix:
-    debug:
-      configuration: debug
-      platform: x64
-    release:
-      configuration: release
-      platform: x64
-
-    # parallel: 2
-    # matrix:
-    # x64_release:
-    #   arch: x64
-    #   configuration: release
-    # x86_release:
-    #   arch: x86
-    #   configuration: release
-
+  queue: ${{ parameters.queue }}
+    parallel: 2
+    matrix:
+      debug:
+        configuration: debug
+        platform: x64
+      release:
+        configuration: release
+        platform: x64
   steps:
   - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
   - script: "echo $(arch) $(configuration) --- $(parameters.arch) $(parameters.configuration)"
