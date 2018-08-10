@@ -4,10 +4,6 @@
 # If this is not configured correctly, builds will fail with error: 
 # "Could not find a queue with name Hosted macOS Preview. The queue does not exist or has not been authorized for use."
 
-env:
-  global:
-  - arch=x64
-  - configuration=Release
 
 phases:
 - phase: Windows
@@ -34,6 +30,11 @@ phases:
       arguments: '-c $env:configuration -v m -r $env:arch'
 
 name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
+
+env:
+  global:
+  - arch=x64
+  - configuration=Release
 
 #   phases:
 # - phase: Windows
