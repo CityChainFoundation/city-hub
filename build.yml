@@ -12,29 +12,12 @@ phases:
   queue: ${{ parameters.queue }}
   steps:
 
-  # Create a secret variable
-  - powershell: |
-      Write-Host '##vso[task.setvariable variable=mySecret;issecret=true]abc'
-
-  # Attempt to output the value in various ways
-  - powershell: |
-      # Using an input-macro:
-      Write-Host "This works: $(mySecret)"
-
-      # Using the env var directly:
-      Write-Host "This does not work: $env:MYSECRET"
-
-      # Using the mapped env var:
-      Write-Host "This works: $env:MY_MAPPED_ENV_VAR"
-    env:
-      MY_MAPPED_ENV_VAR: $(mySecret)
-
   # Node Tool Installer
   # Finds or Downloads and caches specified version spec of Node and adds it to the PATH.
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '8.x' 
-      #checkLatest: false # Optional
+  # - task: NodeTool@0
+  #   inputs:
+  #     versionSpec: '8.x' 
+  #     #checkLatest: false # Optional
 
   - task: Npm@1
     displayName: npm install
@@ -46,7 +29,10 @@ phases:
     inputs:
       command: custom
       verbose: false
-      customCommand: ${{ format('run publish:{0}', parameters.platform) }} 
+      ${{ if eq(parameters.platform, 'win') }}:
+        customCommand: ${{ format('run publish:{0}:{1}', parameters.platform, parameters.arch) }} 
+      ${{ if ne(parameters.platform, 'win') }}:
+        customCommand: ${{ format('run publish:{0}', parameters.platform) }} 
     env:
       GH_TOKEN: $(GH_TOKEN)
 
