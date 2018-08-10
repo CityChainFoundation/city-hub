@@ -1,21 +1,26 @@
+# City Hub - Continuous Integration Setup - VSTS
+
+# It is important that the initial Agent Queue on VSTS is configured to be "Hosted Linux Preview", and not "Hosted VS2017".
+# If this is not configured correctly, builds will fail with error: 
+# "Could not find a queue with name Hosted macOS Preview. The queue does not exist or has not been authorized for use."
+
 phases:
 - phase: Windows
   queue: Hosted VS2017
   steps:
   - script: echo hello from Windows
-  - script: build arch=$(buildArch) config=$(buildConfig)
 
 - phase: macOS
   queue: Hosted macOS Preview
   steps:
   - script: echo hello from macOS
-  - script: build arch=$(buildArch) config=$(buildConfig)
 
 - phase: Linux
   queue: Hosted Linux Preview
   steps:
   - script: echo hello from Linux
-  - script: build arch=$(buildArch) config=$(buildConfig)
+
+name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
 
 #   phases:
 # - phase: Windows
