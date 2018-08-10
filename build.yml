@@ -12,12 +12,9 @@ phases:
   queue: ${{ parameters.queue }}
   steps:
 
-  # Node Tool Installer
-  # Finds or Downloads and caches specified version spec of Node and adds it to the PATH.
-  # - task: NodeTool@0
-  #   inputs:
-  #     versionSpec: '8.x' 
-  #     #checkLatest: false # Optional
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '8.x' # Required by Angular 6
 
   - task: Npm@1
     displayName: npm install
