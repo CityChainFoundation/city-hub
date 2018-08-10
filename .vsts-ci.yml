@@ -4,10 +4,6 @@
 # If this is not configured correctly, builds will fail with error: 
 # "Could not find a queue with name Hosted macOS Preview. The queue does not exist or has not been authorized for use."
 
-env:
-  arch:x64
-  configuration:Release
-
 phases:
 - phase: Windows
   queue: Hosted VS2017
