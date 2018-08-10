@@ -2,26 +2,31 @@ parameters:
   name: ''
   queue: ''
   displayName: ''
-  arch: ''
-  configuration: ''
+  platform: ''
+  arch: 'x64' # Only overriden by 32-bit Windows
+  configuration: 'release' # Only do debug if specified
 
 phases:
 - phase: ${{ parameters.name }}
   displayName: ${{ parameters.displayName }}
   queue: ${{ parameters.queue }}
-    matrix:
-        x64_debug:
-          buildArch: x64
-          buildConfig: debug
-        x64_release:
-          buildArch: x64
-          buildConfig: release
-        x86_release:
-          buildArch: x86
-          buildConfig: release
+
+    # Not able to use matrix setup in the template, figure out how to do that in the future to more easily build different outputs on the same agent instance.
+    # matrix:
+    #     x64_debug:
+    #       buildArch: x64
+    #       buildConfig: debug
+    #     x64_release:
+    #       buildArch: x64
+    #       buildConfig: release
+    #     x86_release:
+    #       buildArch: x86
+    #       buildConfig: release
   steps:
-  - script: build arch=$(buildArch) config=$(buildConfig)
-  # - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
+  - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
+  
+  #- script: build arch=$(arch) config=$(buildConfig)
+   
   # - script: "echo $(arch) $(configuration) --- $(parameters.arch) $(parameters.configuration)"
   # - script: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the $(configuration) value"
   #- script: npm install

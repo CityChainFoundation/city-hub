@@ -4,24 +4,38 @@
 # If this is not configured correctly, builds will fail with error: 
 # "Could not find a queue with name Hosted macOS Preview. The queue does not exist or has not been authorized for use."
 
+# Not able to use matrix setup in the template, figure out how to do that in the future to more easily build different outputs on the same agent instance.
+# Until someone finds a solution, we'll define custom phases for both x86 and x64 on Windows. Do we still want to support 32-bit builds?
+
 phases:
 - template: build.yml
   parameters:
     name: macOS
+    platform: mac
     queue: Hosted macOS Preview
     displayName: macOS (x64)
 
 - template: build.yml
   parameters:
     name: Linux
+    platform: linux
     queue: Hosted Linux Preview
     displayName: Linux (AppImage, x64)
 
 - template: build.yml
   parameters:
     name: Windows
+    platform: win
+    arch: x86
     queue: Hosted VS2017
     displayName: Windows (x64)
+
+- template: build.yml
+  parameters:
+    name: Windows
+    platform: win
+    queue: Hosted VS2017
+    displayName: Windows (x86)
 
 name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
 
