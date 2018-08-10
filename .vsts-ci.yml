@@ -4,32 +4,29 @@
 # If this is not configured correctly, builds will fail with error: 
 # "Could not find a queue with name Hosted macOS Preview. The queue does not exist or has not been authorized for use."
 
+env:
+  arch:x64
+  configuration:Release
 
 phases:
 - phase: Windows
   queue: Hosted VS2017
   displayName: Windows (x64)
-  env:
-  - arch=x64
-  - configuration=Release
   steps:
-  - script: echo hello from Windows
+  - script: echo hello from Windows $env:arch
+    env:
+      arch:x64
+      configuration:Release
 
 - phase: macOS
   queue: Hosted macOS Preview
   displayName: macOS (x64)
-  env:
-    - arch=x64
-    - configuration=Release
   steps:
-  - script: echo hello from macOS
+  - script: echo hello from macOS $env:arch
 
 - phase: Linux
   queue: Hosted Linux Preview
   displayName: Linux (AppImage, x64)
-  env:
-  - arch=x64
-  - configuration=Release
   steps:
   - script: echo hello from Linux
   - task: DotNetCoreCLI@2
@@ -37,6 +34,9 @@ phases:
     inputs:
       command: publish
       arguments: '-c $env:configuration -v m -r $env:arch'
+    env:
+      arch:x64
+      configuration:Release
 
 name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
 
