@@ -37,6 +37,7 @@
     "build:mac": "npm run builder -- --mac",
     "build:all": "npm run builder -- -mwl",
     "publish": "npm run builder --  -wl -p always",
+    "publish:mac": "npm run builder --  -m -p always",
     "publish:win": "npm run builder --  -w -p always",
     "publish:linux": "npm run builder --  -l -p always",
     "test": "npm run postinstall:web && ng test",

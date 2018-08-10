@@ -46,7 +46,7 @@ phases:
     inputs:
       command: custom
       verbose: false
-      customCommand: ${{ format('run build:{0}', parameters.platform) }} 
+      customCommand: ${{ format('run publish:{0}', parameters.platform) }} 
     env:
       GH_TOKEN: $(GH_TOKEN)
 
