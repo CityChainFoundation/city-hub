@@ -29,8 +29,8 @@ phases:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
       $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v0.0.2/City.Chain-0.0.2-win-x64.zip"
-      Write-Output "PATH: $Env:BUILD_SOURCESDIRECTORY"
-      $output = "$Env:BUILD_SOURCESDIRECTORY\daemon.zip"
+      $output = Join-Path -Path "$Env:BUILD_SOURCESDIRECTORY" -ChildPath "daemon.zip"
+      Write-Output "Path: $output"
       $start_time = Get-Date
       (New-Object System.Net.WebClient).DownloadFile($url, $output)
       Write-Output "Variable 1: $env:platform"
@@ -47,9 +47,9 @@ phases:
     displayName: Download daemon
     workingDirectory: $(build.SourcesDirectory)
     env:
-      arch: parameters.arch
-      platform: parameters.platform
-      daemon: parameters.daemon
+      arch: $(parameters.arch)
+      platform: $(parameters.platform)
+      daemon: $(parameters.daemon)
 
   - task: ExtractFiles@1
     displayName: Extract files 
