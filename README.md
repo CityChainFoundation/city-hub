@@ -86,15 +86,8 @@ Additionally there are two PowerShell scripts to build Windows packages. These a
 
 ## City Chain daemon
 
-To update with the latest City Chain daemon, make sure you update the submodule that links to city-chain:
-
-```sh
-git submodule foreach git pull origin master
-```
-
-```sh
-git submodule update --init --force --remote
-```
+To update with the latest City Chain daemon, you must edit the build.yml and edit the parameter named "daemon". Make sure you set it
+to a public released and tested version of the City Chain daemon.
 
 ## Contribution
 
