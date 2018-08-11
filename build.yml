@@ -13,6 +13,7 @@ phases:
   steps:
 
   - task: NodeTool@0
+    displayName: upgrade node
     inputs:
       versionSpec: '8.x' # Required by Angular 6
 
@@ -22,7 +23,7 @@ phases:
       verbose: false
 
   - task: Npm@1
-    displayName: npm run build
+    displayName: npm run publish
     inputs:
       command: custom
       verbose: false
