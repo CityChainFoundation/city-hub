@@ -25,21 +25,22 @@ phases:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
       $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.{3}" -f $env:daemon, $env:platform, $env:arch, $env:extension
+      Write-Output "Url: $url"
       $output = Join-Path -Path "$Env:BUILD_SOURCESDIRECTORY" -ChildPath "daemon.zip"
       Write-Output "Path: $output"
-      $start_time = Get-Date
-      (New-Object System.Net.WebClient).DownloadFile($url, $output)
-      Write-Output "Variable 1: $env:platform"
-      Write-Output "Variable 2: $env:arch"
-      Write-Output "Variable 3: $env:daemon"
-      Write-Host "AGENT_WORKFOLDER contents:"
-      gci $Env:AGENT_WORKFOLDER
-      Write-Host "AGENT_BUILDDIRECTORY contents:"
-      gci $Env:AGENT_BUILDDIRECTORY
-      Write-Host "BUILD_SOURCESDIRECTORY contents:"
-      gci $Env:BUILD_SOURCESDIRECTORY
-      Write-Output "Saved: $output"
-      Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
+      #$start_time = Get-Date
+      #(New-Object System.Net.WebClient).DownloadFile($url, $output)
+      # Write-Output "Variable 1: $env:platform"
+      # Write-Output "Variable 2: $env:arch"
+      # Write-Output "Variable 3: $env:daemon"
+      # Write-Host "AGENT_WORKFOLDER contents:"
+      # gci $Env:AGENT_WORKFOLDER
+      # Write-Host "AGENT_BUILDDIRECTORY contents:"
+      # gci $Env:AGENT_BUILDDIRECTORY
+      # Write-Host "BUILD_SOURCESDIRECTORY contents:"
+      # gci $Env:BUILD_SOURCESDIRECTORY
+      # Write-Output "Saved: $output"
+      # Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
     displayName: Download daemon
     workingDirectory: $(build.SourcesDirectory)
     env:
