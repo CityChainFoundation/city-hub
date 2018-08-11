@@ -8,7 +8,6 @@ parameters:
 
 phases:
 - phase: ${{ parameters.name }}
-  #displayName: ${{ parameters.displayName }}
   displayName: ${{ format('City Hub ({0}-{1})', parameters.platform, parameters.arch) }}
   queue: ${{ parameters.queue }}
   steps:
@@ -23,12 +22,9 @@ phases:
     inputs:
       verbose: false
 
-  #- powershell: ${{ format('##vso[task.setvariable variable=BUILDPLATFORM]{0}', parameters.platform) }}
-  #- powershell: ${{ format('##vso[task.setvariable variable=BUILDARCH]{0}', parameters.arch) }}
-
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-      $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v0.0.2/City.Chain-0.0.2-win-x64.zip"
+      $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.{3}" -f $env:daemon, $env:platform, $env:arch, $env:extension
       $output = Join-Path -Path "$Env:BUILD_SOURCESDIRECTORY" -ChildPath "daemon.zip"
       Write-Output "Path: $output"
       $start_time = Get-Date
@@ -47,9 +43,14 @@ phases:
     displayName: Download daemon
     workingDirectory: $(build.SourcesDirectory)
     env:
-      arch: ${{ parameters.arch }}
-      platform: ${{ parameters.platform }}
       daemon: ${{ parameters.daemon }}
+      platform: ${{ parameters.platform }}
+      arch: ${{ parameters.arch }}
+
+      ${{ if eq(parameters.platform, 'linux') }}:
+        extension: ".tar.gz"
+      ${{ if ne(parameters.platform, 'linux') }}:
+        extension: ".zip"
 
   - task: ExtractFiles@1
     displayName: Extract files 
