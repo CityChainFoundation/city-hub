@@ -29,9 +29,22 @@ phases:
       $output = "$PSScriptRoot\City.Chain-0.0.2-win-x64.zip"
       $start_time = Get-Date
       (New-Object System.Net.WebClient).DownloadFile($url, $output)
+      Write-Output "Variable 1: $Env:AGENT_BUILDDIRECTORY"
+      Write-Host "AGENT_WORKFOLDER contents:"
+      gci $Env:AGENT_WORKFOLDER
+      Write-Host "AGENT_BUILDDIRECTORY contents:"
+      gci $Env:AGENT_BUILDDIRECTORY
+      Write-Host "BUILD_SOURCESDIRECTORY contents:"
+      gci $Env:BUILD_SOURCESDIRECTORY
       Write-Output "Saved: $output"
       Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
     displayName: Download daemon
+
+  # - task: ExtractFiles@1
+  #   displayName: Extract files 
+  #   inputs:
+  #     archiveFilePatterns: 'City.Chain*.zip'
+  #     destinationFolder: daemon
 
   # - task: automagically.DownloadExtractFile.DownloadExtractFile.DownloadExtractFile@1
   #   displayName: Download and extract daemon
