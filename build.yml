@@ -25,22 +25,19 @@ phases:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
       $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.{3}" -f $env:daemon, $env:platform, $env:arch, $env:extension
-      Write-Output "Url: $url"
       $output = Join-Path -Path "$Env:BUILD_SOURCESDIRECTORY" -ChildPath "daemon.zip"
+      Write-Output "Url: $url"
       Write-Output "Path: $output"
-      #$start_time = Get-Date
-      #(New-Object System.Net.WebClient).DownloadFile($url, $output)
-      # Write-Output "Variable 1: $env:platform"
-      # Write-Output "Variable 2: $env:arch"
-      # Write-Output "Variable 3: $env:daemon"
-      # Write-Host "AGENT_WORKFOLDER contents:"
-      # gci $Env:AGENT_WORKFOLDER
-      # Write-Host "AGENT_BUILDDIRECTORY contents:"
-      # gci $Env:AGENT_BUILDDIRECTORY
-      # Write-Host "BUILD_SOURCESDIRECTORY contents:"
-      # gci $Env:BUILD_SOURCESDIRECTORY
-      # Write-Output "Saved: $output"
-      # Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
+      $start_time = Get-Date
+      (New-Object System.Net.WebClient).DownloadFile($url, $output)
+      Write-Host "AGENT_WORKFOLDER contents:"
+      gci $Env:AGENT_WORKFOLDER
+      Write-Host "AGENT_BUILDDIRECTORY contents:"
+      gci $Env:AGENT_BUILDDIRECTORY
+      Write-Host "BUILD_SOURCESDIRECTORY contents:"
+      gci $Env:BUILD_SOURCESDIRECTORY
+      Write-Output "Saved: $output"
+      Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
     displayName: Download daemon
     workingDirectory: $(build.SourcesDirectory)
     env:
@@ -49,27 +46,15 @@ phases:
       arch: ${{ parameters.arch }}
 
       ${{ if eq(parameters.platform, 'linux') }}:
-        extension: ".tar.gz"
+        extension: "tar.gz"
       ${{ if ne(parameters.platform, 'linux') }}:
-        extension: ".zip"
+        extension: "zip"
 
   - task: ExtractFiles@1
     displayName: Extract files 
     inputs:
       archiveFilePatterns: 'daemon.zip'
       destinationFolder: daemon
-
-  # - task: automagically.DownloadExtractFile.DownloadExtractFile.DownloadExtractFile@1
-  #   displayName: Download and extract daemon
-  #   inputs:
-
-  #     ${{ if eq(parameters.platform, 'linux') }}:
-  #       FileUrl: ${{ format('https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.tar.gz', parameters.daemon, parameters.platform, parameters.arch) }}
-  #     ${{ if ne(parameters.platform, 'linux') }}:
-  #       FileUrl: ${{ format('https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.zip', parameters.daemon, parameters.platform, parameters.arch) }}
-      
-  #     requireExtraction: true
-  #     ExtractedArchivePath: '$(System.DefaultWorkingDirectory)/daemon'
 
   - task: Npm@1
     displayName: npm run publish
@@ -82,40 +67,3 @@ phases:
         customCommand: ${{ format('run publish:{0}', parameters.platform) }} 
     env:
       GH_TOKEN: $(GH_TOKEN)
-
-    # Not able to use matrix setup in the template, figure out how to do that in the future to more easily build different outputs on the same agent instance.
-    # matrix:
-    #     x64_debug:
-    #       buildArch: x64
-    #       buildConfig: debug
-    #     x64_release:
-    #       buildArch: x64
-    #       buildConfig: release
-    #     x86_release:
-    #       buildArch: x86
-    #       buildConfig: release
-  # steps:
-  # - script: echo hello from $(parameters.name) and $(parameters.queue) and $(arch) and $(parameters.configuration)
-  # - task: DotNetCoreCLI@2
-  #   displayName: dotnet publish
-  #   inputs:
-  #     command: publish
-  #     arguments: '-c ${{ parameters.configuration }} -r ${{ parameters.platform }}-${{ parameters.arch }} -v m'
-  #     workingDirectory: 'src/city-chain/src/City.Chain'
-
-# steps:
-# - task: DotNetCoreCLI@2
-#   displayName: dotnet publish
-#   inputs:
-#     command: publish
-#     arguments: '-c release'
-#     workingDirectory: 'src/app'
-
-
-  #- script: build arch=$(arch) config=$(buildConfig)
-   
-  # - script: "echo $(arch) $(configuration) --- $(parameters.arch) $(parameters.configuration)"
-  # - script: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the $(configuration) value"
-  #- script: npm install
-  #- script: npm test
-
