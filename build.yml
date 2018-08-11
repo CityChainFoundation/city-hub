@@ -23,25 +23,19 @@ phases:
     inputs:
       verbose: false
 
-  - powershell: ${{ format('##vso[task.setvariable variable=BUILDPLATFORM]{0}', parameters.platform) }}
-  - powershell: ${{ format('##vso[task.setvariable variable=BUILDARCH]{0}', parameters.arch) }}
+  #- powershell: ${{ format('##vso[task.setvariable variable=BUILDPLATFORM]{0}', parameters.platform) }}
+  #- powershell: ${{ format('##vso[task.setvariable variable=BUILDARCH]{0}', parameters.arch) }}
 
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
       $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v0.0.2/City.Chain-0.0.2-win-x64.zip"
+      Write-Output "PATH: $Env:BUILD_SOURCESDIRECTORY"
       $output = "$Env:BUILD_SOURCESDIRECTORY\daemon.zip"
       $start_time = Get-Date
       (New-Object System.Net.WebClient).DownloadFile($url, $output)
       Write-Output "Variable 1: $env:platform"
       Write-Output "Variable 2: $env:arch"
-      Write-Output "Variable 3: $env:configuration"
-      Write-Output "Variable 4: $env:daemon"
-
-      Write-Output "Variable 5: $env:BUILDPLATFORM"
-      Write-Output "Variable 6: $env:BUILDARCH"
-      Write-Output "Variable 7: $Env:BUILDPLATFORM"
-      Write-Output "Variable 8: $Env:BUILDARCH"
-
+      Write-Output "Variable 3: $env:daemon"
       Write-Host "AGENT_WORKFOLDER contents:"
       gci $Env:AGENT_WORKFOLDER
       Write-Host "AGENT_BUILDDIRECTORY contents:"
@@ -51,6 +45,11 @@ phases:
       Write-Output "Saved: $output"
       Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
     displayName: Download daemon
+    workingDirectory: $(build.SourcesDirectory)
+    env:
+      arch: parameters.arch
+      platform: parameters.platform
+      daemon: parameters.daemon
 
   - task: ExtractFiles@1
     displayName: Extract files 
