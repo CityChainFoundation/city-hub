@@ -26,10 +26,13 @@ phases:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
       $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v0.0.2/City.Chain-0.0.2-win-x64.zip"
-      $output = "$PSScriptRoot\City.Chain-0.0.2-win-x64.zip"
+      $output = "$Env:BUILD_SOURCESDIRECTORY\daemon.zip"
       $start_time = Get-Date
       (New-Object System.Net.WebClient).DownloadFile($url, $output)
-      Write-Output "Variable 1: $Env:AGENT_BUILDDIRECTORY"
+      Write-Output "Variable 1: $Env:platform"
+      Write-Output "Variable 2: $Env:arch"
+      Write-Output "Variable 3: $Env:configuration"
+      Write-Output "Variable 4: $Env:daemon"
       Write-Host "AGENT_WORKFOLDER contents:"
       gci $Env:AGENT_WORKFOLDER
       Write-Host "AGENT_BUILDDIRECTORY contents:"
@@ -40,11 +43,11 @@ phases:
       Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
     displayName: Download daemon
 
-  # - task: ExtractFiles@1
-  #   displayName: Extract files 
-  #   inputs:
-  #     archiveFilePatterns: 'City.Chain*.zip'
-  #     destinationFolder: daemon
+  - task: ExtractFiles@1
+    displayName: Extract files 
+    inputs:
+      archiveFilePatterns: 'daemon.zip'
+      destinationFolder: daemon
 
   # - task: automagically.DownloadExtractFile.DownloadExtractFile.DownloadExtractFile@1
   #   displayName: Download and extract daemon
