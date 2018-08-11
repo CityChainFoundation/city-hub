@@ -44,7 +44,6 @@ phases:
 
       Write-Output "Variable 9: $(platform)"
       Write-Output "Variable 10: $(arch)"
-      Write-Output "Variable 11: $(configuration)"
       Write-Output "Variable 12: $(daemon)"
       Write-Output "Variable 13: $(parameters)"
 
