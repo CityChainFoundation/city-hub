@@ -42,11 +42,6 @@ phases:
       Write-Output "Variable 7: $Env:BUILDPLATFORM"
       Write-Output "Variable 8: $Env:BUILDARCH"
 
-      Write-Output "Variable 9: $(platform)"
-      Write-Output "Variable 10: $(arch)"
-      Write-Output "Variable 12: $(daemon)"
-      Write-Output "Variable 13: $(parameters)"
-
       Write-Host "AGENT_WORKFOLDER contents:"
       gci $Env:AGENT_WORKFOLDER
       Write-Host "AGENT_BUILDDIRECTORY contents:"
