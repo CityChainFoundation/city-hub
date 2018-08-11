@@ -24,13 +24,13 @@ phases:
       verbose: false
 
   - powershell: |
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v0.0.2/City.Chain-0.0.2-win-x64.zip"
-    $output = "$PSScriptRoot\City.Chain-0.0.2-win-x64.zip"
-    $start_time = Get-Date
-    (New-Object System.Net.WebClient).DownloadFile($url, $output)
-    Write-Output "Saved: $output"
-    Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+      $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v0.0.2/City.Chain-0.0.2-win-x64.zip"
+      $output = "$PSScriptRoot\City.Chain-0.0.2-win-x64.zip"
+      $start_time = Get-Date
+      (New-Object System.Net.WebClient).DownloadFile($url, $output)
+      Write-Output "Saved: $output"
+      Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
     displayName: Download daemon
 
   # - task: automagically.DownloadExtractFile.DownloadExtractFile.DownloadExtractFile@1
