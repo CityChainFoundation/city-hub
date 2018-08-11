@@ -1,5 +1,8 @@
 # City Hub - Continuous Integration Setup for VSTS
 
+trigger:
+- master
+
 phases:
 - template: build.yml
   parameters:
