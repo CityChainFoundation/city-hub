@@ -47,9 +47,9 @@ phases:
     displayName: Download daemon
     workingDirectory: $(build.SourcesDirectory)
     env:
-      arch: $(parameters.arch)
-      platform: $(parameters.platform)
-      daemon: $(parameters.daemon)
+      arch: ${{ parameters.arch }}
+      platform: ${{ parameters.platform }}
+      daemon: ${{ parameters.daemon }}
 
   - task: ExtractFiles@1
     displayName: Extract files 
