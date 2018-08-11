@@ -25,7 +25,7 @@ phases:
   - powershell: |
       [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
       $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.{3}" -f $env:daemon, $env:platform, $env:arch, $env:extension
-      $output = Join-Path -Path "$Env:BUILD_SOURCESDIRECTORY" -ChildPath "daemon.zip"
+      $output = Join-Path -Path "$Env:BUILD_SOURCESDIRECTORY" -ChildPath "daemon.$env:extension"
       Write-Output "Url: $url"
       Write-Output "Path: $output"
       $start_time = Get-Date
@@ -42,7 +42,6 @@ phases:
     workingDirectory: $(build.SourcesDirectory)
     env:
       daemon: ${{ parameters.daemon }}
-      platform: ${{ parameters.platform }}
       arch: ${{ parameters.arch }}
 
       ${{ if eq(parameters.platform, 'linux') }}:
@@ -50,10 +49,20 @@ phases:
       ${{ if ne(parameters.platform, 'linux') }}:
         extension: "zip"
 
+      ${{ if eq(parameters.platform, 'mac') }}:
+        platform: "osx"
+      ${{ if ne(parameters.platform, 'mac') }}:
+        platform: ${{ parameters.platform }}
+
   - task: ExtractFiles@1
     displayName: Extract files 
     inputs:
-      archiveFilePatterns: 'daemon.zip'
+
+      ${{ if eq(parameters.platform, 'linux') }}:
+        archiveFilePatterns: 'daemon.tar.gz'
+      ${{ if ne(parameters.platform, 'linux') }}:
+        archiveFilePatterns: 'daemon.zip'
+
       destinationFolder: daemon
 
   - task: Npm@1
