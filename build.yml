@@ -2,6 +2,7 @@ parameters:
   name: ''
   queue: ''
   platform: ''
+  daemon: '0.0.2' # Version of the daemon to download
   arch: 'x64' # Only overriden by 32-bit Windows
   configuration: 'Release' # Only do Debug if specified
 
@@ -21,6 +22,18 @@ phases:
     displayName: npm install
     inputs:
       verbose: false
+
+  - task: automagically.DownloadExtractFile.DownloadExtractFile.DownloadExtractFile@1
+    displayName: Download and extract daemon
+    inputs:
+
+      ${{ if eq(parameters.platform, 'linux') }}:
+        FileUrl: ${{ format('https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.tar.gz', parameters.daemon, parameters.platform, parameters.arch) }}
+      ${{ if ne(parameters.platform, 'linux') }}:
+        FileUrl: ${{ format('https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.zip', parameters.daemon, parameters.platform, parameters.arch) }}
+      
+      requireExtraction: true
+      ExtractedArchivePath: '$(System.DefaultWorkingDirectory)/daemon'
 
   - task: Npm@1
     displayName: npm run publish
