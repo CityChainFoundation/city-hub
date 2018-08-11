@@ -1,7 +1,9 @@
 # City Hub - Continuous Integration Setup for VSTS
 
 trigger:
-- master
+  branches:
+    exclude:
+    - v* #Exclude verions tags
 
 phases:
 - template: build.yml
