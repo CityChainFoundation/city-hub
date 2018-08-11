@@ -2,6 +2,10 @@
 
 trigger:
   branches:
+    include:
+    - master
+    - feature/*
+    - bug/*
     exclude:
     - v* #Exclude verions tags
 
