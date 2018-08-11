@@ -23,17 +23,27 @@ phases:
     inputs:
       verbose: false
 
-  - task: automagically.DownloadExtractFile.DownloadExtractFile.DownloadExtractFile@1
-    displayName: Download and extract daemon
-    inputs:
+  - powershell: |
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v0.0.2/City.Chain-0.0.2-win-x64.zip"
+    $output = "$PSScriptRoot\City.Chain-0.0.2-win-x64.zip"
+    $start_time = Get-Date
+    (New-Object System.Net.WebClient).DownloadFile($url, $output)
+    Write-Output "Saved: $output"
+    Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
+    displayName: Download daemon
 
-      ${{ if eq(parameters.platform, 'linux') }}:
-        FileUrl: ${{ format('https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.tar.gz', parameters.daemon, parameters.platform, parameters.arch) }}
-      ${{ if ne(parameters.platform, 'linux') }}:
-        FileUrl: ${{ format('https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.zip', parameters.daemon, parameters.platform, parameters.arch) }}
+  # - task: automagically.DownloadExtractFile.DownloadExtractFile.DownloadExtractFile@1
+  #   displayName: Download and extract daemon
+  #   inputs:
+
+  #     ${{ if eq(parameters.platform, 'linux') }}:
+  #       FileUrl: ${{ format('https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.tar.gz', parameters.daemon, parameters.platform, parameters.arch) }}
+  #     ${{ if ne(parameters.platform, 'linux') }}:
+  #       FileUrl: ${{ format('https://github.com/CityChainFoundation/city-chain/releases/download/v{0}/City.Chain-{0}-{1}-{2}.zip', parameters.daemon, parameters.platform, parameters.arch) }}
       
-      requireExtraction: true
-      ExtractedArchivePath: '$(System.DefaultWorkingDirectory)/daemon'
+  #     requireExtraction: true
+  #     ExtractedArchivePath: '$(System.DefaultWorkingDirectory)/daemon'
 
   - task: Npm@1
     displayName: npm run publish
@@ -82,3 +92,4 @@ phases:
   # - script: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]this is the $(configuration) value"
   #- script: npm install
   #- script: npm test
+
