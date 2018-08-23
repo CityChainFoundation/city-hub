@@ -32,9 +32,9 @@ export class NetworkComponent implements OnInit, OnDestroy, AfterContentInit {
 
     constructor(private globalService: GlobalService,
         private apiService: ApiService,
-        private walletService: WalletService,
         private readonly cd: ChangeDetectorRef,
-        private observableMedia: ObservableMedia) {
+        private observableMedia: ObservableMedia,
+        public walletService: WalletService) {
 
     }
 
