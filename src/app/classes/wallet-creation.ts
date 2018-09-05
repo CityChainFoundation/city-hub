@@ -11,6 +11,6 @@ export class WalletCreation {
   name: string;
   mnemonic: string;
   password: string;
+  passPhrase: string;
   folderPath?: string;
-  passPhrase?: string;
 }
