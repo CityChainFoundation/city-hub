@@ -43,7 +43,7 @@ export class LoadComponent implements OnDestroy {
         private log: Logger,
         private zone: NgZone,
         private apiService: ApiService,
-        private appState: ApplicationStateService) {
+        public appState: ApplicationStateService) {
 
         this.modes = [
             // { id: 'simple', name: 'Mobile' }, // Disabled in beta release.
@@ -55,7 +55,7 @@ export class LoadComponent implements OnDestroy {
 
         this.networks = [
             // { id: 'main', name: 'Main' }, // Disabled in beta release.
-            // { id: 'citymain', name: 'City Chain' },
+            { id: 'citymain', name: 'City Chain' },
             { id: 'citytest', name: 'City Chain (Test)' },
             // { id: 'stratistest', name: 'Stratis (Test)' },
             // { id: 'stratismain', name: 'Stratis' },
