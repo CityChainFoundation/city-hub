@@ -46,24 +46,24 @@ export class LoadComponent implements OnDestroy {
         public appState: ApplicationStateService) {
 
         this.modes = [
-            // { id: 'simple', name: 'Mobile' }, // Disabled in beta release.
-            // { id: 'light', name: 'Light' }, // Disabled in beta release.
+            // { id: 'simple', name: 'Mobile' },
+            // { id: 'light', name: 'Light' },
             { id: 'full', name: 'Full' },
             // { id: 'pos', name: 'Point-of-Sale (POS)' },
             // { id: 'readonly', name: 'Read-only' }
         ];
 
         this.networks = [
-            // { id: 'main', name: 'Main' }, // Disabled in beta release.
+            // { id: 'main', name: 'Main' },
             { id: 'citymain', name: 'City Chain' },
             { id: 'citytest', name: 'City Chain (Test)' },
             // { id: 'stratistest', name: 'Stratis (Test)' },
             // { id: 'stratismain', name: 'Stratis' },
-            // { id: 'regtest', name: 'RegTest' } // Disabled in beta release.
+            // { id: 'regtest', name: 'RegTest' }
         ];
 
-        this.selectedMode = this.modes[0];
-        this.selectedNetwork = this.networks[0];
+        this.selectedMode = this.modes.find(mode => mode.id === this.appState.mode);
+        this.selectedNetwork = this.networks.find(network => network.id === this.appState.network);
         this.remember = true;
 
         const existingMode = localStorage.getItem('Network:Mode');
