@@ -20,8 +20,8 @@ import { CoincapAsset } from 'src/app/classes/coincap-asset';
 export class DashboardComponent implements OnInit, OnDestroy {
     @HostBinding('class.dashboard') hostClass = true;
     public walletInfo = 'When you send, balance can\ntemporarily go from confirmed\nto unconfirmed.';
+    public coincapAsset: CoincapAsset;
     private coincapSubscription: Subscription;
-    private coincapAsset: CoincapAsset;
 
     constructor(private apiService: ApiService,
         private coincap: CoincapService,
