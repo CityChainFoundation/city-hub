@@ -45,14 +45,17 @@
     "publish:linux": "npm run builder --  -l -p always",
     "test": "npm run postinstall:web && ng test",
     "e2e": "npm run postinstall:web && ng e2e",
-    "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
+    "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "private": true,
   "dependencies": {
     "electron-context-menu": "0.13.0",
     "electron-log": "3.0.6",
     "electron-updater": "4.0.14",
-    "conventional-changelog-cli": "2.0.21"
+    "conventional-changelog-cli": "2.0.21",
+    "snyk": "^1.192.6"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.801.0",
@@ -103,5 +106,6 @@
     "typescript": "~3.4.3",
     "wait-on": "3.2.0",
     "zone.js": "0.9.1"
-  }
+  },
+  "snyk": true
 }
