@@ -59,7 +59,12 @@ export class ReceiveComponent implements OnInit, OnDestroy {
     }
 
     public showAllAddresses() {
-        this.getAddresses();
+        if (this.appState.isSimpleMode) {
+            this.getAddressesSimpleMode();
+        } else {
+            this.getAddressesFullNode();
+        }
+
         this.showAll = true;
     }
 
@@ -94,9 +99,8 @@ export class ReceiveComponent implements OnInit, OnDestroy {
 
     private getUnusedReceiveAddressSimpleMode() {
         // tslint:disable-next-line
-        debugger;
+        // debugger;
         const network = this.appState.networkDefinition;
-
         const xpubkey = this.wallet.activeWallet.extPubKey;
         const root = bip32.fromBase58(xpubkey);
 
@@ -131,7 +135,58 @@ export class ReceiveComponent implements OnInit, OnDestroy {
             ;
     }
 
-    private getAddresses() {
+    private getAddressesSimpleMode() {
+
+        this.allAddresses = [];
+        this.usedAddresses = [];
+        this.unusedAddresses = [];
+        this.changeAddresses = [];
+
+        const network = this.appState.networkDefinition;
+
+        const xpubkey = this.wallet.activeWallet.extPubKey;
+        const root = bip32.fromBase58(xpubkey);
+
+        // tslint:disable-next-line: prefer-for-of
+        for (let i = 0; i < 20; i++) {
+            // TODO: Find the last used indexed from querying indexer (persisted to IndexedDB locally)
+            const address = this.getAddress(root.derivePath('0/' + i), network);
+            this.unusedAddresses.push(address);
+
+            // tslint:disable-next-line
+            // debugger;
+        }
+
+        const walletInfo = new WalletInfo(this.globalService.getWalletName());
+        this.log.info('Wallet info:', walletInfo);
+
+        // this.apiService.getAllAddresses(walletInfo)
+        //     .subscribe(
+        //         response => {
+        //             this.allAddresses = [];
+        //             this.usedAddresses = [];
+        //             this.unusedAddresses = [];
+        //             this.changeAddresses = [];
+        //             this.allAddresses = response.addresses;
+
+        //             for (const address of this.allAddresses) {
+        //                 if (address.isUsed) {
+        //                     this.usedAddresses.push(address.address);
+        //                 } else if (address.isChange) {
+        //                     this.changeAddresses.push(address.address);
+        //                 } else {
+        //                     this.unusedAddresses.push(address.address);
+        //                 }
+        //             }
+        //             // }
+        //         },
+        //         error => {
+        //             this.log.error('Failed to get addresses:', error);
+        //         }
+        //     );
+    }
+
+    private getAddressesFullNode() {
         const walletInfo = new WalletInfo(this.globalService.getWalletName());
 
         this.apiService.getAllAddresses(walletInfo)

@@ -98,6 +98,7 @@ export class CreateAccountComponent implements OnInit {
 
     private getNewMnemonicLocal() {
         this.mnemonic = bip39.generateMnemonic();
+        this.mnemonic = 'mystery problem faith negative member bottom concert bundle asthma female process twelve';
         this.verification = this.mnemonic.split(' ')[2];
     }
 
@@ -132,26 +133,18 @@ export class CreateAccountComponent implements OnInit {
 
         if (this.appState.isSimpleMode) {
             // C#: HdOperations.GetExtendedKey(recoveryPhrase, string.Empty);
-            bip39.mnemonicToSeed(wallet.mnemonic, wallet.passPhrase).then(seed => {
+            bip39.mnemonicToSeed(this.mnemonic, wallet.passPhrase).then(masterSeed => {
+                const self = this;
+                const masterNode = bip32.fromSeed(masterSeed, this.appState.networkDefinition);
 
                 // tslint:disable-next-line
-                debugger;
+                const accountNode = masterNode.derivePath("m/44'/1926'/0'"); // TODO: Get the coin type from network definition.
+                const xpub = accountNode.neutered().toBase58();
 
-                // C#: HdOperations.GetExtendedPublicKey(privateKey, masterSeed.ChainCode, network.Consensus.CoinType, 0);
-                const fromSeed = bip32.fromSeed(seed, this.appState.networkDefinition);
+                bip38.encryptAsync(masterNode.privateKey, true, wallet.password, (out) => {
 
-                const extPubKey = fromSeed.neutered().toBase58();
-
-                const privateKeyWif = wif.encode(0xed, fromSeed.privateKey, true);
-
-                const decoded = wif.decode(privateKeyWif);
-
-                const self = this;
-
-                // const master = HDNode.fromSeedBuffer(seed);
-                // const test = this.getAddress(null, null);
-
-                bip38.encryptAsync(fromSeed.privateKey, true, wallet.password, (out) => {
+                    // tslint:disable-next-line
+                    // debugger;
 
                     // Instantiate it
                     const db = new StorageService('cityhub');
@@ -164,9 +157,9 @@ export class CreateAccountComponent implements OnInit {
                     db.wallets.add({
                         name: wallet.name,
                         isExtPubKeyWallet: false,
-                        extPubKey,
+                        extPubKey: xpub,
                         encryptedSeed: out,
-                        chainCode: '',
+                        chainCode: masterNode.chainCode,
                         network: 'CityMain',
                         creationTime: Date.now() / 1000,
                         coinType: 1926,
@@ -178,8 +171,6 @@ export class CreateAccountComponent implements OnInit {
                     self.log.info('Wallet Created!');
                     self.snackBar.open('Account successfully created!', null, { duration: 3000 });
                     self.router.navigateByUrl('/login');
-
-                    console.log(seed);
 
                 }, null, this.appState.networkParams);
 
