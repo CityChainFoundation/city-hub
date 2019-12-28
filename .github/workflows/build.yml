@@ -74,8 +74,17 @@ jobs:
         (New-Object System.Net.WebClient).DownloadFile($url, $output)
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
 
-    - name: Unpack
-      run: 7z e daemon${{ matrix.extension }}
+    - name: Unpack (1)
+      run: 7z x daemon${{ matrix.extension }} -odaemon
+
+    - name: Unpack (2)
+      run: unzip -a daemon${{ matrix.extension }} -d daemon
+
+    - name: Unpack (3)
+      run: unzip -a daemon${{ matrix.extension }}
+
+    - name: Unpack (4)
+      run: tar -xvzf  daemon${{ matrix.extension }} -C daemon
 
     - name: Install (npm)
       run: npm install
