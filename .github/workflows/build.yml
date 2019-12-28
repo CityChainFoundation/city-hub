@@ -74,6 +74,12 @@ jobs:
         (New-Object System.Net.WebClient).DownloadFile($url, $output)
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
 
+    - name: Build
+      run: npm run build:${{ matrix.platform }}
+
+    - name: Release
+      run: npm run publish:${{ matrix.platform }}
+
     # - name: Setup .NET Core (${{ matrix.dotnet_version }})
     #   uses: actions/setup-dotnet@v1
     #   with:
