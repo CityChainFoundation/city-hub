@@ -48,7 +48,8 @@
     "publish:linuxsnap": "npm run builder --  -l snap -p always",
     "test": "npm run postinstall:web && ng test",
     "e2e": "npm run postinstall:web && ng e2e",
-    "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
+    "version": "node -p \"require('./package.json').version\"",
+    "changelog": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
   },
