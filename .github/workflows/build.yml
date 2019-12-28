@@ -63,6 +63,7 @@ jobs:
         sudo snap install --classic snapcraft
 
     - name: Download City Chain
+      working-directory: ./build
       shell: pwsh
       run: |
         echo ${env:PATH}
@@ -76,24 +77,30 @@ jobs:
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
 
     - name: Unpack (Windows)
+      working-directory: ./build
       if: matrix.os == 'windows-latest'
       run: 7z x daemon${{ matrix.extension }} -odaemon
 
     - name: Unpack (Mac)
+      working-directory: ./build
       if: matrix.os == 'macos-latest'
       run: unzip -a daemon${{ matrix.extension }} -d daemon
 
     - name: Unpack (Linux)
+      working-directory: ./build
       if: matrix.os == 'ubuntu-latest'
       run: tar -xvzf daemon${{ matrix.extension }} -C daemon
 
     - name: Install (npm)
+      working-directory: ./build
       run: npm install
 
     - name: Build (npm)
+      working-directory: ./build
       run: npm run build:${{ matrix.platform }}
 
     - name: Release (npm)
+      working-directory: ./build
       run: npm run publish:${{ matrix.platform }}
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
