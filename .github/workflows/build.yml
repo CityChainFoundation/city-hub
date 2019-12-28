@@ -82,7 +82,7 @@ jobs:
 
     - name: Release (npm)
       run: npm run publish:${{ matrix.platform }}
-      with:
+      env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # - name: Setup .NET Core (${{ matrix.dotnet_version }})
