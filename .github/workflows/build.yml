@@ -11,7 +11,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        #os: [ windows-latest, ubuntu-latest, macos-latest ]
+        os: [ macos-latest ]
         include:
           - os: windows-latest
             extension: ".zip"
@@ -74,8 +75,8 @@ jobs:
         (New-Object System.Net.WebClient).DownloadFile($url, $output)
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
 
-    - name: Unpack (1)
-      run: 7z x daemon${{ matrix.extension }} -odaemon
+    # - name: Unpack (1)
+    #   run: 7z x daemon${{ matrix.extension }} -odaemon
 
     - name: Unpack (2)
       run: unzip -a daemon${{ matrix.extension }} -d daemon
