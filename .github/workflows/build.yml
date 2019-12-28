@@ -64,15 +64,15 @@ jobs:
     - name: Download City Chain
       shell: pwsh
       run: |
-      echo ${env:PATH}
-      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-      $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v${{ env.DAEMON }}/City.Chain-${{ env.DAEMON }}-${{ matrix.platform }}-${{ env.ARCH }}.${{ matrix.extension }}"
-      $output = "."
-      Write-Output "Url: $url"
-      Write-Output "Path: $output"
-      $start_time = Get-Date
-      (New-Object System.Net.WebClient).DownloadFile($url, $output)
-      Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
+        echo ${env:PATH}
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v${{ env.DAEMON }}/City.Chain-${{ env.DAEMON }}-${{ matrix.platform }}-${{ env.ARCH }}.${{ matrix.extension }}"
+        $output = '.'
+        Write-Output "Url: $url"
+        Write-Output "Path: $output"
+        $start_time = Get-Date
+        (New-Object System.Net.WebClient).DownloadFile($url, $output)
+        Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
 
     # - name: Setup .NET Core (${{ matrix.dotnet_version }})
     #   uses: actions/setup-dotnet@v1
