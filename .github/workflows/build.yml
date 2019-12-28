@@ -62,39 +62,13 @@ jobs:
         sudo apt install snapd
         sudo snap install --classic snapcraft
 
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJson(github) }}
-      run: echo "$GITHUB_CONTEXT"
-    - name: Dump job context
-      env:
-        JOB_CONTEXT: ${{ toJson(job) }}
-      run: echo "$JOB_CONTEXT"
-    - name: Dump steps context
-      env:
-        STEPS_CONTEXT: ${{ toJson(steps) }}
-      run: echo "$STEPS_CONTEXT"
-    - name: Dump runner context
-      env:
-        RUNNER_CONTEXT: ${{ toJson(runner) }}
-      run: echo "$RUNNER_CONTEXT"
-    - name: Dump strategy context
-      env:
-        STRATEGY_CONTEXT: ${{ toJson(strategy) }}
-      run: echo "$STRATEGY_CONTEXT"
-    - name: Dump matrix context
-      env:
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      run: echo "$MATRIX_CONTEXT"
-
     - name: Download City Chain
-      working-directory: ./build
       shell: pwsh
       run: |
         echo ${env:PATH}
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v${{ env.DAEMON }}/City.Chain-${{ env.DAEMON }}-${{ matrix.platform }}-${{ env.ARCH }}${{ matrix.extension }}"
-        $output = "daemon${{ matrix.extension }}"
+        $output = Join-Path -Path "${{runner.workspace}}" -ChildPath "daemon${{ matrix.extension }}"
         Write-Output "Url: $url"
         Write-Output "Path: $output"
         $start_time = Get-Date
@@ -102,30 +76,24 @@ jobs:
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
 
     - name: Unpack (Windows)
-      working-directory: ./build
       if: matrix.os == 'windows-latest'
-      run: 7z x daemon${{ matrix.extension }} -odaemon
+      run: 7z x ${{runner.workspace}}/daemon${{ matrix.extension }} -odaemon
 
     - name: Unpack (Mac)
-      working-directory: ./build
       if: matrix.os == 'macos-latest'
-      run: unzip -a daemon${{ matrix.extension }} -d daemon
+      run: unzip -a ${{runner.workspace}}\daemon${{ matrix.extension }} -d daemon
 
     - name: Unpack (Linux)
-      working-directory: ./build
       if: matrix.os == 'ubuntu-latest'
-      run: tar -xvzf daemon${{ matrix.extension }} -C daemon
+      run: tar -xvzf ${{runner.workspace}}\daemon${{ matrix.extension }} -C daemon
 
     - name: Install (npm)
-      working-directory: ./build
       run: npm install
 
     - name: Build (npm)
-      working-directory: ./build
       run: npm run build:${{ matrix.platform }}
 
     - name: Release (npm)
-      working-directory: ./build
       run: npm run publish:${{ matrix.platform }}
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
