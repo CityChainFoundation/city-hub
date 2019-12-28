@@ -11,7 +11,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        #os: [ windows-latest, ubuntu-latest, macos-latest ]
+        os: [ ubuntu-latest ]
         include:
           - os: windows-latest
             extension: ".zip"
@@ -67,7 +68,7 @@ jobs:
         echo ${env:PATH}
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $url = "https://github.com/CityChainFoundation/city-chain/releases/download/v${{ env.DAEMON }}/City.Chain-${{ env.DAEMON }}-${{ matrix.platform }}-${{ env.ARCH }}${{ matrix.extension }}"
-        $output = Join-Path -Path "./" -ChildPath "daemon${{ matrix.extension }}"
+        $output = "daemon${{ matrix.extension }}"
         Write-Output "Url: $url"
         Write-Output "Path: $output"
         $start_time = Get-Date
@@ -84,7 +85,7 @@ jobs:
 
     - name: Unpack (Linux)
       if: matrix.os == 'ubuntu-latest'
-      run: tar -xvzf  daemon${{ matrix.extension }} -C daemon
+      run: tar -xvzf daemon${{ matrix.extension }} -C daemon
 
     - name: Install (npm)
       run: npm install
