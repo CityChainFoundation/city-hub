@@ -84,7 +84,9 @@ jobs:
 
     - name: Unpack (Linux)
       if: matrix.os == 'ubuntu-latest'
-      run: tar -xvzf ./daemon${{ matrix.extension }} -C ./daemon
+      run: |
+        mkdir daemon
+        tar -xvzf daemon${{ matrix.extension }} -C daemon
 
     - name: Install (npm)
       run: npm install
