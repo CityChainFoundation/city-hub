@@ -29,7 +29,7 @@ export class BlockHistoryComponent implements OnInit, OnDestroy {
     blockJson: string;
     displayedColumns: string[] = ['txid', 'output', 'inputs', 'outputs', 'size'];
     dataSource = new MatTableDataSource<any>();
-    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+    @ViewChild(MatPaginator) paginator: MatPaginator;
     @HostListener('window:keyup', ['$event'])
     keyEvent(event: KeyboardEvent) {
         // tslint:disable-next-line: deprecation
