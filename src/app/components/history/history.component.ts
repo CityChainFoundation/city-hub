@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { TransactionInfo } from '../../classes/transaction-info';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material';
+import { MatTableDataSource } from '@angular/material/table';
 import { ApplicationStateService } from '../../services/application-state.service';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
