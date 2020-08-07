@@ -51,7 +51,12 @@
     "version": "node -p \"require('./package.json').version\"",
     "changelog": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "mobile-setup": "npm install -g cordova && cd mobile && cordova platform add android && cordova platform add ios && cordova platform add browser && cd ..",
+    "mobile-build": "npm run postinstall:electron && npm run electron:tsc && ng lint && ng build --outputPath=./mobile/www",
+    "mobile-android": "cd mobile && cordova run android && cd ..",
+    "mobile-ios": "cd mobile && cordova run ios && cd ..",
+    "mobile-browser": "cd mobile && cordova run browser && cd .."
   },
   "private": true,
   "dependencies": {
