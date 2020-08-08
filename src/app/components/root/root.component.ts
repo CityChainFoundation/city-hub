@@ -20,6 +20,8 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { retryWhen, delay, tap } from 'rxjs/operators';
 import { NodeStatus } from '@models/node-status';
 import { ReportComponent } from '../report/report.component';
+import { SettingsService } from 'src/app/services/settings.service';
+import { IdentityService } from 'src/app/services/identity.service';
 
 @Component({
     selector: 'app-root',
@@ -67,6 +69,8 @@ export class RootComponent implements OnInit, OnDestroy {
         private log: Logger,
         public updateService: UpdateService,
         public detailsService: DetailsService,
+        public identityService: IdentityService,
+        public settings: SettingsService,
         private apiService: ApiService,
         private walletService: WalletService,
         private readonly cd: ChangeDetectorRef,
@@ -81,64 +85,67 @@ export class RootComponent implements OnInit, OnDestroy {
 
         this.isAuthenticated = authService.isAuthenticated();
 
-        if (this.electronService.remote) {
-            const applicationVersion = this.electronService.remote.app.getVersion();
+        if (this.electronService.ipcRenderer) {
+            if (this.electronService.remote) {
+                const applicationVersion = this.electronService.remote.app.getVersion();
 
-            this.appState.setVersion(applicationVersion);
-            this.log.info('Version: ' + applicationVersion);
-        }
+                this.appState.setVersion(applicationVersion);
+                this.log.info('Version: ' + applicationVersion);
+            }
 
-        this.ipc = electronService.ipcRenderer;
+            this.ipc = electronService.ipcRenderer;
 
-        this.ipc.on('daemon-exiting', (event, error) => {
-            this.log.info('daemon is currently being stopped... please wait...');
-            this.appState.shutdownInProgress = true;
-            this.cd.detectChanges();
-
-            // If the exit takes a very long time, we want to allow users to forcefully exit City Hub.
-            setTimeout(() => {
-                this.appState.shutdownDelayed = true;
+            this.ipc.on('daemon-exiting', (event, error) => {
+                this.log.info('daemon is currently being stopped... please wait...');
+                this.appState.shutdownInProgress = true;
                 this.cd.detectChanges();
-            }, 60000);
 
-        });
+                // If the exit takes a very long time, we want to allow users to forcefully exit City Hub.
+                setTimeout(() => {
+                    this.appState.shutdownDelayed = true;
+                    this.cd.detectChanges();
+                }, 60000);
 
-        this.ipc.on('daemon-exited', (event, error) => {
-            this.log.info('daemon is stopped.');
-            this.appState.shutdownInProgress = false;
-            this.appState.shutdownDelayed = false;
-
-            // Perform a new close event on the window, this time it will close itself.
-            window.close();
-        });
-
-        this.ipc.on('daemon-error', (event, error) => {
-
-            this.log.error(error);
-
-            const dialogRef = this.dialog.open(ReportComponent, {
-                data: {
-                    title: 'Failed to start City Chain background daemon',
-                    error,
-                    lines: this.log.lastEntries()
-             } });
-
-            dialogRef.afterClosed().subscribe(result => {
-                this.log.info(`Dialog result: ${result}`);
             });
-        });
 
-        this.ipc.on('log-debug', (event, msg: any) => {
-            this.log.verbose(msg);
-        });
+            this.ipc.on('daemon-exited', (event, error) => {
+                this.log.info('daemon is stopped.');
+                this.appState.shutdownInProgress = false;
+                this.appState.shutdownDelayed = false;
 
-        this.ipc.on('log-info', (event, msg: any) => {
-            this.log.info(msg);
-        });
+                // Perform a new close event on the window, this time it will close itself.
+                window.close();
+            });
 
-        this.ipc.on('log-error', (event, msg: any) => {
-            this.log.error(msg);
-        });
+            this.ipc.on('daemon-error', (event, error) => {
+
+                this.log.error(error);
+
+                const dialogRef = this.dialog.open(ReportComponent, {
+                    data: {
+                        title: 'Failed to start City Chain background daemon',
+                        error,
+                        lines: this.log.lastEntries()
+                    }
+                });
+
+                dialogRef.afterClosed().subscribe(result => {
+                    this.log.info(`Dialog result: ${result}`);
+                });
+            });
+
+            this.ipc.on('log-debug', (event, msg: any) => {
+                this.log.verbose(msg);
+            });
+
+            this.ipc.on('log-info', (event, msg: any) => {
+                this.log.info(msg);
+            });
+
+            this.ipc.on('log-error', (event, msg: any) => {
+                this.log.error(msg);
+            });
+        }
 
         // Upon initial load, we'll check if we are on mobile or not and show/hide menu.
         const isSmallScreen = breakpointObserver.isMatched(Breakpoints.HandsetPortrait);
@@ -177,7 +184,12 @@ export class RootComponent implements OnInit, OnDestroy {
             const contentContainer = document.querySelector('.app-view-area-main') || window;
             contentContainer.scrollTo(0, 0);
         });
+    }
 
+    get identityTooltip(): string {
+        if (this.walletService.generalInfo) {
+            return `Sondre Bjellås (@sondreb): ${this.walletService.generalInfo.connectedNodes}\nBlock Height: ${this.walletService.generalInfo.chainTip}\nSynced: ${this.walletService.percentSynced}`;
+        }
     }
 
     get networkStatusTooltip(): string {
