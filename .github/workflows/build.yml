@@ -94,7 +94,14 @@ jobs:
     - name: Build (npm)
       run: npm run build:${{ matrix.platform }}
 
+    - name: Variables
+      run: |
+        echo GH_TOKEN=${{ secrets.manual_github_token }} >> $GITHUB_ENV
+      shell: bash
+
     - name: Release (npm)
       run: npm run publish:${{ matrix.platform }}
       env:
         GH_TOKEN: ${{ secrets.manual_github_token }}
+        GITHUB_TOKEN: ${{ secrets.manual_github_token }}
+        token: ${{ secrets.manual_github_token }}
