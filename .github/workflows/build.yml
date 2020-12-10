@@ -33,9 +33,6 @@ jobs:
     
     env:
       PROJECT_NAME: 'City.Chain'
-      SOLUTION_PATH: 'src/City.Chain.sln'
-      PROJECT_PATH: 'src/City.Chain/City.Chain.csproj'
-      BUILD_CONFIGURATION: 'Release'
       DAEMON: '1.0.27'
       ARCH: 'x64'
 
@@ -60,7 +57,6 @@ jobs:
         sudo apt update
         sudo apt install snapd
         sudo snap install --classic snapcraft
-
     - name: Download City Chain
       shell: pwsh
       run: |
@@ -73,7 +69,6 @@ jobs:
         $start_time = Get-Date
         (New-Object System.Net.WebClient).DownloadFile($url, $output)
         Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)" 
-
     - name: Unpack (Windows)
       if: matrix.os == 'windows-latest'
       run: 7z x daemon${{ matrix.extension }} -odaemon
@@ -87,14 +82,10 @@ jobs:
       run: |
         mkdir daemon
         tar -xvzf daemon${{ matrix.extension }} -C daemon
-
     - name: Install (npm)
       run: npm install
 
-    - name: Build (npm)
-      run: npm run build:${{ matrix.platform }}
-
-    - name: Release (npm)
+    - name: Build and Publish
       run: npm run publish:${{ matrix.platform }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
