@@ -64,7 +64,7 @@
         </div>
         <div fxFlex>
 
-            <mat-card class="dashboard-card" *ngIf="selectedCoinTicker">
+            <!-- <mat-card class="dashboard-card" *ngIf="selectedCoinTicker">
                 <mat-icon class="dashboard-info-icon clickable" (click)="changeTicker(1)" [matTooltip]="tickerInfo">chevron_right</mat-icon>
                 <mat-icon class="dashboard-info-icon clickable" (click)="changeTicker(-1)" [matTooltip]="tickerInfo">chevron_left</mat-icon>
                 <mat-card-title>{{selectedCoinTicker.name}} ({{selectedCoinTicker.symbol}})</mat-card-title>
@@ -74,13 +74,8 @@
                         {{selectedCoinTicker.price}} {{selectedCoinTicker.pair}} (<span class="marketprice" [ngClass]="{'marketprice-negative': selectedCoinTicker.changePercent24Hr < 0}">{{selectedCoinTicker.changePercent24Hr | priceUnit}}%</span>)<br>
                     </span>
                     <table class="marketprice-table">
-                        <!-- <tr>
-                            <td>Market Cap: {{selectedCoinTicker.marketCap | priceUnit}}</td>
-                            <td>Supply: {{selectedCoinTicker.supply | priceUnit}} {{selectedCoinTicker.symbol}}</td>
-                        </tr> -->
                         <tr>
                             <td>Volume: {{selectedCoinTicker.volume24Hr | priceUnit}} {{selectedCoinTicker.volumepair}}</td>
-                            <!-- <td>Rank: {{selectedCoinTicker.rank}}</td> -->
                         </tr>
                     </table>
                 </mat-card-content>
@@ -93,7 +88,7 @@
                         Please wait...
                     </p>
                 </mat-card-content>
-            </mat-card>
+            </mat-card> -->
 
             <mat-card class="dashboard-card">
                 <mat-card-title>Notifications ({{notifications.count}})</mat-card-title>
