@@ -34,7 +34,7 @@ jobs:
     
     env:
       PROJECT_NAME: 'City.Chain'
-      DAEMON: '1.0.31'
+      DAEMON: '1.0.32'
       ARCH: 'x64'
 
     steps:
