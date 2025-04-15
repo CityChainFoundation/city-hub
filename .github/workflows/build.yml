@@ -12,13 +12,13 @@ jobs:
 
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-20.04, macos-latest ]
+        os: [ windows-latest, ubuntu-22.04, macos-latest ]
         include:
           - os: windows-latest
             extension: ".zip"
             runtime: "win-x64"
             platform: "win"
-          - os: ubuntu-20.04
+          - os: ubuntu-22.04
             extension: ".tar.gz"
             runtime: "linux-x64"
             platform: "linux"
@@ -53,7 +53,7 @@ jobs:
       shell: bash
 
     - name: Tooling
-      if: matrix.os == 'ubuntu-20.04'
+      if: matrix.os == 'ubuntu-22.04'
       run: |
         sudo apt update
         sudo apt install snapd
@@ -79,7 +79,7 @@ jobs:
       run: unzip -a daemon${{ matrix.extension }} -d daemon
 
     - name: Unpack (Linux)
-      if: matrix.os == 'ubuntu-20.04'
+      if: matrix.os == 'ubuntu-22.04'
       run: |
         mkdir daemon
         tar -xvzf daemon${{ matrix.extension }} -C daemon
