@@ -11,13 +11,13 @@ jobs:
 
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
+        os: [ windows-latest, ubuntu-20.04, macos-latest ]
         include:
           - os: windows-latest
             extension: ".zip"
             runtime: "win-x64"
             platform: "win"
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             extension: ".tar.gz"
             runtime: "linux-x64"
             platform: "linux"
@@ -36,7 +36,7 @@ jobs:
       SOLUTION_PATH: 'src/City.Chain.sln'
       PROJECT_PATH: 'src/City.Chain/City.Chain.csproj'
       BUILD_CONFIGURATION: 'Release'
-      DAEMON: '1.0.34'
+      DAEMON: '1.0.36'
       ARCH: 'x64'
 
     steps:
@@ -55,7 +55,7 @@ jobs:
       shell: bash
 
     - name: Tooling
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-20.04'
       run: |
         sudo apt update
         sudo apt install snapd
@@ -83,7 +83,7 @@ jobs:
       run: unzip -a daemon${{ matrix.extension }} -d daemon
 
     - name: Unpack (Linux)
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-20.04'
       run: |
         mkdir daemon
         tar -xvzf daemon${{ matrix.extension }} -C daemon
